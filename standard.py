@@ -1,6 +1,5 @@
-from dataset import DataSet
-from regression import linear_regression
-from plotting import line, scatter
+from statapy.regression.regression import linear_regression
+from statapy.plotting.plotting import scatter
 
 
 def full_process(dataset, x, y):
