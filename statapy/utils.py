@@ -1,4 +1,9 @@
-import pandas as pd
+import statsmodels.api as sm
+import os
+
+
+log_path = "logs"
+write_default = True
 
 
 def get_column_sliced(data, columns):
@@ -31,3 +36,50 @@ def column_corrector(func):
         kwargs["columns"] = correct_columns
         return func(*args, **kwargs)
     return correct_func
+
+
+def write_to_file(filename, msg):
+    try:
+        if not os.path.exists(log_path):
+            os.mkdir(log_path)
+        with open(os.path.join(log_path, filename+".txt"), "w") as f:
+            f.write(msg)
+    except:
+        print(f"Failed to write msg to filename: {filename}. Printing in console instead: \n {msg}")
+    else:
+        print(f"Log File: \"{os.path.join(log_path, filename+'.txt')}\" Succesfully Created")
+    return
+
+
+def get_dataset_sliced(dataset, X_cols, y_col):
+    if X_cols is None or y_col is None:
+        raise ValueError("X_cols and y_col cannot be None. "
+                         "Please Ensure they were entered as explicit arguments with arg names")
+    X_cols = get_column_sliced(dataset.data, X_cols)
+    X = dataset.data[X_cols]
+    y = dataset.data[y_col]
+    X = sm.add_constant(X)
+    return X, y
+
+
+def regression_function(func):
+    def r_func(*args, **kwargs):
+        X_cols = kwargs.get("X_cols", None)
+        y_col = kwargs.get("y_col", None)
+        dataset = args[0]
+        X, y = get_dataset_sliced(dataset, X_cols, y_col)
+        filename = f"{dataset.name}-{X_cols} vs {y_col}"
+        kwargs["X"] = X
+        kwargs["y"] = y
+        kwargs["X_cols"] = None
+        kwargs["y_col"] = None
+        write = kwargs.get("write", write_default)
+        results, regtype = func(*args, **kwargs)
+        msg = str(results.summary())
+        filename = regtype + " " + filename
+        if write:
+            write_to_file(filename, msg)
+        else:
+            print(msg)
+        return results
+    return r_func
