@@ -3,7 +3,7 @@ from statapy.utils import write_default, regression_function
 
 
 @regression_function
-def linear_regression(dataset, X_cols=None, y_col=None, X=None, y=None, write=write_default):
+def OLS_regression(dataset, X_cols=None, y_col=None, X=None, y=None, write=write_default):
     """
     Performs OLS Regression
 
@@ -23,3 +23,5 @@ def linear_regression(dataset, X_cols=None, y_col=None, X=None, y=None, write=wr
     results = model.fit()
     regtype = f"OLS"
     return results, regtype
+
+

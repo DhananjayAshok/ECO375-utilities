@@ -1,9 +1,9 @@
 import statsmodels.api as sm
 import os
 
-
 log_path = "logs"
 write_default = True
+save_fig_default = True
 
 
 def get_column_sliced(data, columns):
@@ -83,3 +83,24 @@ def regression_function(func):
             print(msg)
         return results
     return r_func
+
+
+def save_plot(plt, title):
+    save_path = os.path.join(log_path, f"{title}.png")
+    plt.savefig(save_path)
+    plt.clf()
+    return
+
+
+def plotting_function(func):
+    def p_func(*args, **kwargs):
+        plt, title = func(*args, **kwargs)
+        save_fig = kwargs.get("save_fig", save_fig_default)
+        if save_fig:
+            save_plot(plt, title)
+        else:
+            plt.show()
+        return
+    return p_func
+
+
