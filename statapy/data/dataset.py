@@ -65,13 +65,22 @@ class DataSet(object):
         """
 
         :param columns: List of columns to be made into dummies
-        :return: list of new columns (dummy columns) added to the dataset
+        :return: list of new columns (dummy columns) added to the dataset in this call
         """
+        old_cols = set(self.data.columns)
         self.data = pd.get_dummies(self.data, columns=columns)
         now_cols = set(self.data.columns)
-        old_cols = set(self.original_columns)
         new_cols = now_cols.difference(old_cols)
         return list(new_cols)
+
+    @column_corrector
+    def dropna(self, columns=None):
+        """
+        Drop rows which have an NA element in columns indicated by the slice
+        :return:
+        """
+        self.data.dropna(inplace=True, subset=columns)
+
 
 
 

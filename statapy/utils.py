@@ -68,6 +68,7 @@ def regression_function(func):
         y_col = kwargs.get("y_col", None)
         dataset = args[0]
         X, y = get_dataset_sliced(dataset, X_cols, y_col)
+        print(X, y)
         filename = f"{dataset.name}-{X_cols} vs {y_col}"
         kwargs["X"] = X
         kwargs["y"] = y
